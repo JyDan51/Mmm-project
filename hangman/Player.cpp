@@ -1,7 +1,7 @@
 #include "Player.hpp"
 
-void Player::setName(const std::string& playerName) {
-    name = playerName;
+void Player::setName(const std::string& name) {
+    this->name = name;
 }
 
 std::string Player::getName() const {
@@ -17,10 +17,6 @@ bool Player::hasGuessed(char letter) const {
 }
 
 std::string Player::getGuessedLetters() const {
-    std::string letters;
-    for (char letter : guessedLetters) {
-        letters += letter;
-        letters += ' ';
-    }
-    return letters;
+    std::string result(guessedLetters.begin(), guessedLetters.end());
+    return result;
 }

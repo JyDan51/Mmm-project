@@ -3,6 +3,7 @@
 
 #include <string>
 #include <map>
+#include <iostream>
 
 class Leaderboard {
 private:
@@ -11,6 +12,8 @@ private:
 public:
     void addScore(const std::string& playerName, int score);
     void display() const;
+    void setScores(const std::map<std::string, int>& newScores);
+    std::map<std::string, int> getScores() const;
 };
 
 #endif
