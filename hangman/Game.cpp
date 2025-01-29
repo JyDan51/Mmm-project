@@ -1,16 +1,21 @@
 #include "Game.hpp"
 #include <iostream>
-#include <fstream>
 #include <cstdlib>
 #include <ctime>
 
-Game::Game() : attemptsLeft(6) {}
+Game::Game(Leaderboard& lb, SaveManager& sm) 
+    : attemptsLeft(6), leaderboard(&lb), saveManager(&sm) {}
 
-void Game::loadWord() {
-    std::vector<std::string> words = {"programming", "hangman", "challenge", "player", "keyboard"};
-    srand(time(0));
-    wordToGuess = words[rand() % words.size()];
+void Game::setCustomWord(const std::string& word) {
+    wordToGuess = word;
     guessedWord = std::string(wordToGuess.length(), '_');
+}
+
+void Game::resetGame() {
+    wordToGuess.clear();
+    guessedWord.clear();
+    attemptsLeft = 6;
+    player = Player(); // Полностью сбрасываем состояние игрока
 }
 
 void Game::displayState() {
@@ -42,12 +47,19 @@ void Game::processGuess(char guess) {
 }
 
 void Game::start() {
+    resetGame(); // Очищаем игру перед стартом
+
     std::cout << "Enter your name: ";
     std::string playerName;
     std::cin >> playerName;
     player.setName(playerName);
 
-    loadWord();
+    if (wordToGuess.empty()) {
+        std::vector<std::string> words = {"programming", "hangman", "challenge", "player", "keyboard"};
+        srand(time(0));
+        wordToGuess = words[rand() % words.size()];
+        guessedWord = std::string(wordToGuess.length(), '_');
+    }
 
     while (attemptsLeft > 0 && guessedWord != wordToGuess) {
         displayState();
@@ -60,10 +72,10 @@ void Game::start() {
 
     if (guessedWord == wordToGuess) {
         std::cout << "Congratulations, " << player.getName() << "! You guessed the word: " << wordToGuess << "\n";
-        leaderboard.addScore(player.getName(), attemptsLeft);
+        leaderboard->addScore(player.getName(), attemptsLeft);
     } else {
         std::cout << "Game over! The word was: " << wordToGuess << "\n";
     }
 
-    leaderboard.display();
+    saveManager->saveScores(leaderboard->getScores(), "scores.txt");
 }

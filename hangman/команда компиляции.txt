@@ -1,1 +1,7 @@
-g++ main.o Game.o Leaderboard.o SaveManager.o Player.o -o hangman
+g++ -c main.cpp -o main.o
+g++ -c Game.cpp -o Game.o
+g++ -c Leaderboard.cpp -o Leaderboard.o
+g++ -c SaveManager.cpp -o SaveManager.o
+g++ -c Player.cpp -o Player.o
+
+g++ main.o Game.o Leaderboard.o SaveManager.o Player.o -o hangman.exe

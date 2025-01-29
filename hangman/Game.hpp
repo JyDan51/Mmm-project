@@ -5,6 +5,7 @@
 #include <vector>
 #include "Player.hpp"
 #include "Leaderboard.hpp"
+#include "SaveManager.hpp"
 
 class Game {
 private:
@@ -12,15 +13,19 @@ private:
     std::string guessedWord;
     int attemptsLeft;
     Player player;
-    Leaderboard leaderboard;
+    Leaderboard* leaderboard;
+    SaveManager* saveManager;
 
     void displayState();
     void processGuess(char guess);
-    void loadWord();
+    void resetGame(); // Добавляем метод для очистки состояния
 
 public:
-    Game();
+    Game(Leaderboard& lb, SaveManager& sm);
     void start();
+    void setCustomWord(const std::string& word);
+    std::string getPlayerName() const;
+    int getScore() const;
 };
 
 #endif

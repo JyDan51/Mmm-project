@@ -1,8 +1,8 @@
-// main.cpp
 #include "Game.hpp"
 #include "Leaderboard.hpp"
 #include "SaveManager.hpp"
 #include <iostream>
+#include <limits>
 
 void displayMainMenu() {
     std::cout << "\n--- Hangman Main Menu ---\n";
@@ -13,28 +13,44 @@ void displayMainMenu() {
 }
 
 int main() {
-    Game game;
     Leaderboard leaderboard;
     SaveManager saveManager;
 
-    // Load scores from file
+    // Загружаем результаты
     std::string filename = "scores.txt";
     leaderboard.setScores(saveManager.loadScores(filename));
+
+    Game game(leaderboard, saveManager);
 
     while (true) {
         displayMainMenu();
         int choice;
-        std::cin >> choice;
+
+        if (!(std::cin >> choice)) {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Invalid input. Please enter a number.\n";
+            continue;
+        }
 
         switch (choice) {
-            case 1:
+            case 1: {
+                std::string customWord;
+                std::cout << "Enter a custom word (or leave empty for random): ";
+                std::cin.ignore();
+                std::getline(std::cin, customWord);
+                
+                if (!customWord.empty()) {
+                    game.setCustomWord(customWord);
+                }
+
                 game.start();
                 break;
+            }
             case 2:
                 leaderboard.display();
                 break;
             case 3:
-                // Save scores to file before exiting
                 saveManager.saveScores(leaderboard.getScores(), filename);
                 std::cout << "Goodbye!" << std::endl;
                 return 0;
