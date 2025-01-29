@@ -4,22 +4,26 @@
 #include <ctime>
 
 Game::Game(Leaderboard& lb, SaveManager& sm) 
-    : attemptsLeft(6), leaderboard(&lb), saveManager(&sm) {}
+    : attemptsLeft(6), isCustomWordSet(false), leaderboard(&lb), saveManager(&sm) {}
 
 void Game::setCustomWord(const std::string& word) {
     wordToGuess = word;
-    guessedWord = std::string(wordToGuess.length(), '_');
+    guessedWord = std::string(wordToGuess.length(), '_'); // Заполняем _ для отображения
+    isCustomWordSet = true;
 }
 
 void Game::resetGame() {
-    wordToGuess.clear();
-    guessedWord.clear();
     attemptsLeft = 6;
     player = Player(); // Полностью сбрасываем состояние игрока
+
+    if (!isCustomWordSet) { // Если пользователь не вводил слово, сбрасываем его
+        wordToGuess.clear();
+        guessedWord.clear();
+    }
 }
 
 void Game::displayState() {
-    std::cout << "\nWord: " << guessedWord
+    std::cout << "\nWord1: " << guessedWord
               << "\nAttempts left: " << attemptsLeft
               << "\nGuessed letters: " << player.getGuessedLetters()
               << "\n";
@@ -54,12 +58,13 @@ void Game::start() {
     std::cin >> playerName;
     player.setName(playerName);
 
-    if (wordToGuess.empty()) {
+    if (!isCustomWordSet) { // Если слово не задано вручную, выбираем случайное
         std::vector<std::string> words = {"programming", "hangman", "challenge", "player", "keyboard"};
         srand(time(0));
         wordToGuess = words[rand() % words.size()];
-        guessedWord = std::string(wordToGuess.length(), '_');
     }
+
+    guessedWord = std::string(wordToGuess.length(), '_'); // Теперь `guessedWord` всегда создается корректно
 
     while (attemptsLeft > 0 && guessedWord != wordToGuess) {
         displayState();
@@ -78,4 +83,5 @@ void Game::start() {
     }
 
     saveManager->saveScores(leaderboard->getScores(), "scores.txt");
+    isCustomWordSet = false; // После завершения игры сбрасываем кастомное слово
 }

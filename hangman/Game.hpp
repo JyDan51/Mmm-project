@@ -12,13 +12,14 @@ private:
     std::string wordToGuess;
     std::string guessedWord;
     int attemptsLeft;
+    bool isCustomWordSet; // Чекает слово и задано ли оно вообще 
     Player player;
     Leaderboard* leaderboard;
     SaveManager* saveManager;
 
     void displayState();
     void processGuess(char guess);
-    void resetGame(); // Добавляем метод для очистки состояния
+    void resetGame();
 
 public:
     Game(Leaderboard& lb, SaveManager& sm);

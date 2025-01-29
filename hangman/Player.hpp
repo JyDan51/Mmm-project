@@ -19,4 +19,4 @@ public:
     std::string getGuessedLetters() const;
 };
 
-#endif // PLAYER_HPP
+#endif
